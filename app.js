@@ -77,6 +77,7 @@
     select.value=index===0?"RUB":"USD";
   });
   let currentRates=null;
+  let currencyRequest=0;
   const currencyNames=Object.fromEntries(currencyList);
   let currencyDisplay=null;
   try{currencyDisplay=new Intl.DisplayNames(["ru"],{type:"currency"});}catch(_){}
@@ -107,13 +108,17 @@
     rateCache.set(base,rates);return rates;
   }
   async function calculateMoney(){
+    const requestId=++currencyRequest;
     const from=$("money-from").value,to=$("money-to").value,amount=Number($("money-amount").value);
     if($("money-amount").value.trim()===""||!Number.isFinite(amount)){ $("money-result").textContent="Введите сумму";return;}
     $("money-status").textContent="Загружаю справочный курс "+from+"…";
     try{
       if(!currentRates||currentRates.base!==from){
-        const data=await getRates(from);populateCurrencyOptions(data.rates);currentRates={base:from,...data};
+        const data=await getRates(from);
+        if(requestId!==currencyRequest||from!==$("money-from").value)return;
+        populateCurrencyOptions(data.rates);currentRates={base:from,...data};
       }
+      if(requestId!==currencyRequest||from!==$("money-from").value)return;
       const rate=currentRates.rates[to];
       if(typeof rate!=="number"||!Number.isFinite(rate))throw new Error("Для выбранной валюты нет курса в источнике.");
       const converted=amount*rate;
