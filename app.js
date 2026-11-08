@@ -54,10 +54,9 @@
     let result;
     if(kind==="temperature") result=cToTemperature(temperatureToC(value,from),to);
     else result=value*source[2]/target[2];
-    $("unit-result").textContent=nice(result)+" "+target[1].match(/\(([^)]+)\)/)?.[1] || "";
+    $("unit-result").textContent=nice(result);
     $("unit-note").textContent=nice(value)+" "+source[1]+" = "+nice(result)+" "+target[1]+".";
   }
-  Object.keys(unitSets).forEach(()=>{});
   $("unit-kind").addEventListener("change",fillUnits);
   ["unit-amount","unit-from","unit-to"].forEach(id=>$(id).addEventListener("input",calculateUnits));
   $("unit-from").addEventListener("change",calculateUnits);$("unit-to").addEventListener("change",calculateUnits);
