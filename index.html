@@ -3,18 +3,68 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Таблицы перевода единиц измерения</title>
-<meta name="description" content="Справочные таблицы перевода единиц: длина, масса, объём, площадь, скорость, давление, температура, объём данных. Точные коэффициенты по определениям единиц.">
+<title>Интерактивный конвертер единиц измерения и валют</title>
+<meta name="description" content="Интерактивный конвертер единиц измерения с полями для расчётов и конвертер валют с актуальными справочными курсами.">
 <link rel="canonical" href="https://ivanivorontsov-sudo.github.io/edinicy/">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <main>
 <header>
-<h1>Таблицы перевода единиц измерения</h1>
-<p>Краткий справочник. Коэффициенты, отмеченные как точные, следуют из определений единиц. Остальные округлены до указанного числа знаков.</p>
-<nav><a href="#dlina">Длина</a><a href="#massa">Масса</a><a href="#obem">Объём</a><a href="#ploshad">Площадь</a><a href="#skorost">Скорость</a><a href="#davlenie">Давление</a><a href="#temperatura">Температура</a><a href="#dannye">Данные</a></nav>
+<h1>Интерактивный конвертер единиц измерения</h1>
+<p>Введите значение, выберите исходную и целевую единицы — результат рассчитается автоматически. Ниже сохранены справочные таблицы и добавлен конвертер валют с обновляемыми курсами.</p>
+<nav><a href="#calculator">Калькулятор единиц</a><a href="#currency">Курсы валют</a><a href="#dlina">Длина</a><a href="#massa">Масса</a><a href="#obem">Объём</a><a href="#ploshad">Площадь</a><a href="#skorost">Скорость</a><a href="#davlenie">Давление</a><a href="#temperatura">Температура</a><a href="#dannye">Данные</a></nav>
 </header>
+
+<section id="calculator" class="converter-card" aria-labelledby="calc-title">
+  <div class="eyebrow">БЫСТРЫЙ РАСЧЁТ</div>
+  <h2 id="calc-title">Конвертер единиц</h2>
+  <p class="section-lead">Все вычисления выполняются прямо в браузере. Меняйте значение или единицы — ответ обновляется сразу.</p>
+  <div class="calc-grid">
+    <label>Величина
+      <select id="unit-kind">
+        <option value="length">Длина</option><option value="mass">Масса</option><option value="volume">Объём</option><option value="area">Площадь</option><option value="speed">Скорость</option><option value="pressure">Давление</option><option value="temperature">Температура</option><option value="data">Объём данных</option>
+      </select>
+    </label>
+    <label>Значение
+      <input id="unit-amount" type="number" inputmode="decimal" step="any" value="1">
+    </label>
+    <label>Из единицы
+      <select id="unit-from"></select>
+    </label>
+    <label>В единицу
+      <select id="unit-to"></select>
+    </label>
+  </div>
+  <div class="result-box" aria-live="polite">
+    <span>Результат</span>
+    <output id="unit-result">100</output>
+    <small id="unit-note">Выберите параметры для расчёта.</small>
+  </div>
+</section>
+<section id="currency" class="converter-card currency-card" aria-labelledby="currency-title">
+  <div class="eyebrow">КУРСЫ ВАЛЮТ</div>
+  <h2 id="currency-title">Конвертер валют</h2>
+  <p class="section-lead">Справочные курсы загружаются из открытого источника. Сумма и выбор валют обрабатываются в браузере.</p>
+  <div class="calc-grid currency-grid">
+    <label>Сумма
+      <input id="money-amount" type="number" inputmode="decimal" step="any" min="0" value="1000">
+    </label>
+    <label>Из валюты
+      <select id="money-from"></select>
+    </label>
+    <label>В валюту
+      <select id="money-to"></select>
+    </label>
+  </div>
+  <div class="result-box" aria-live="polite">
+    <span>После конвертации</span>
+    <output id="money-result">Загружаю курсы…</output>
+    <small id="money-status">Подключение к источнику курсов…</small>
+  </div>
+  <p class="rate-disclaimer">Курсы обновляются поставщиком примерно раз в сутки и могут отличаться от курса банка, карты или обменника. Перед оплатой проверяйте итоговую сумму у своего провайдера.</p>
+  <p class="rate-credit">Источник курсов: <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer">ExchangeRate-API</a> · <a href="https://www.exchangerate-api.com/docs/free" target="_blank" rel="noopener noreferrer">условия открытого API</a>.</p>
+</section>
 
 <section id="dlina"><h2>Длина</h2>
 <table><tr><th>Единица</th><th>В метрах</th><th>Примечание</th></tr>
@@ -94,10 +144,11 @@
 
 <footer>
 <p>Другие страницы: <a href="https://ivanivorontsov-sudo.github.io/">главная</a>, <a href="https://ivanivorontsov-sudo.github.io/vizitka/">визитка</a>.</p>
-<p>© 2026 Иван Воронцов. Сайт не собирает персональные данные и не использует cookies.</p>
+<p>© 2026 Иван Воронцов. Расчёты выполняются в браузере. Для загрузки справочных курсов используется внешний сервис ExchangeRate-API.</p>
 <p>Владелец: Иван Воронцов, г. Владивосток. Почта для заявлений правообладателей: <a href="mailto:ivanivorontsov@gmail.com">ivanivorontsov@gmail.com</a></p>
 <p>Тексты сайта подготовлены с помощью ИИ (Grok Bot) и проверены. Автор идеи — Иван Воронцов.</p>
 </footer>
 </main>
+<script src="app.js" defer></script>
 </body>
 </html>
