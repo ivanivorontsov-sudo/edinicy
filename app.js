@@ -106,8 +106,8 @@
       $("money-status").textContent=(error&&error.message?error.message:"Ошибка загрузки")+". Проверьте подключение и попробуйте снова.";
     }
   }
-  $("money-amount").addEventListener("input",()=>{if(currentRates&&currentRates.base===$("money-from").value){const rate=currentRates.rates[$("money-to").value];const n=Number($("money-amount").value);$("money-result").textContent=Number.isFinite(n)&&rate?nice(n*rate)+" "+$("money-to").value:"Введите сумму";}});
-  $("money-to").addEventListener("change",()=>{if(currentRates&&currentRates.base===$("money-from").value){const rate=currentRates.rates[$("money-to").value];const n=Number($("money-amount").value);$("money-result").textContent=Number.isFinite(n)&&rate?nice(n*rate)+" "+$("money-to").value:"—";calculateMoney();}});
+  $("money-amount").addEventListener("input",()=>{if(currentRates&&currentRates.base===$("money-from").value){const rate=currentRates.rates[$("money-to").value];const raw=$("money-amount").value.trim(),n=Number(raw);$("money-result").textContent=raw!==""&&Number.isFinite(n)&&Number.isFinite(rate)?nice(n*rate)+" "+$("money-to").value:"Введите сумму";}});
+  $("money-to").addEventListener("change",()=>{if(currentRates&&currentRates.base===$("money-from").value){const rate=currentRates.rates[$("money-to").value];const raw=$("money-amount").value.trim(),n=Number(raw);$("money-result").textContent=raw!==""&&Number.isFinite(n)&&Number.isFinite(rate)?nice(n*rate)+" "+$("money-to").value:"Введите сумму";calculateMoney();}});
   $("money-from").addEventListener("change",()=>{currentRates=null;calculateMoney();});
   calculateMoney();
 })();
