@@ -77,6 +77,25 @@
     select.value=index===0?"RUB":"USD";
   });
   let currentRates=null;
+  const currencyNames=Object.fromEntries(currencyList);
+  let currencyDisplay=null;
+  try{currencyDisplay=new Intl.DisplayNames(["ru"],{type:"currency"});}catch(_){}
+  function populateCurrencyOptions(rates){
+    const codes=Object.keys(rates).sort();
+    ["money-from","money-to"].forEach(id=>{
+      const select=$(id),previous=select.value;
+      select.replaceChildren();
+      codes.forEach(code=>{
+        const option=document.createElement("option");
+        option.value=code;
+        let display=currencyNames[code];
+        if(!display&&currencyDisplay){try{display=currencyDisplay.of(code);}catch(_){}}
+        option.textContent=display&&display!==code?code+" — "+display:code;
+        select.append(option);
+      });
+      select.value=codes.includes(previous)?previous:(id==="money-from"&&codes.includes("RUB")?"RUB":codes[0]);
+    });
+  }
   async function getRates(base){
     const cached=rateCache.get(base);
     if(cached && Date.now()-cached.loadedAt<6*60*60*1000)return cached;
@@ -93,7 +112,7 @@
     $("money-status").textContent="Загружаю справочный курс "+from+"…";
     try{
       if(!currentRates||currentRates.base!==from){
-        const data=await getRates(from);currentRates={base:from,...data};
+        const data=await getRates(from);populateCurrencyOptions(data.rates);currentRates={base:from,...data};
       }
       const rate=currentRates.rates[to];
       if(typeof rate!=="number"||!Number.isFinite(rate))throw new Error("Для выбранной валюты нет курса в источнике.");
@@ -109,5 +128,6 @@
   $("money-amount").addEventListener("input",()=>{if(currentRates&&currentRates.base===$("money-from").value){const rate=currentRates.rates[$("money-to").value];const raw=$("money-amount").value.trim(),n=Number(raw);$("money-result").textContent=raw!==""&&Number.isFinite(n)&&Number.isFinite(rate)?nice(n*rate)+" "+$("money-to").value:"Введите сумму";}});
   $("money-to").addEventListener("change",()=>{if(currentRates&&currentRates.base===$("money-from").value){const rate=currentRates.rates[$("money-to").value];const raw=$("money-amount").value.trim(),n=Number(raw);$("money-result").textContent=raw!==""&&Number.isFinite(n)&&Number.isFinite(rate)?nice(n*rate)+" "+$("money-to").value:"Введите сумму";calculateMoney();}});
   $("money-from").addEventListener("change",()=>{currentRates=null;calculateMoney();});
+  $("money-refresh").addEventListener("click",()=>{const base=$("money-from").value;rateCache.delete(base);currentRates=null;calculateMoney();});
   calculateMoney();
 })();
