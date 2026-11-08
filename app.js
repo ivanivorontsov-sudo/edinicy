@@ -54,7 +54,8 @@
     let result;
     if(kind==="temperature") result=cToTemperature(temperatureToC(value,from),to);
     else result=value*source[2]/target[2];
-    $("unit-result").textContent=nice(result);
+    const suffix=target[1].match(/\(([^)]+)\)/)?.[1]||target[1];
+    $("unit-result").textContent=nice(result)+" "+suffix;
     $("unit-note").textContent=nice(value)+" "+source[1]+" = "+nice(result)+" "+target[1]+".";
   }
   $("unit-kind").addEventListener("change",fillUnits);
@@ -121,7 +122,9 @@
       if(requestId!==currencyRequest||from!==$("money-from").value)return;
       const rate=currentRates.rates[to];
       if(typeof rate!=="number"||!Number.isFinite(rate))throw new Error("Для выбранной валюты нет курса в источнике.");
-      const converted=amount*rate;
+      const latestRaw=$("money-amount").value.trim(),latestAmount=Number(latestRaw);
+      if(latestRaw===""||!Number.isFinite(latestAmount)){ $("money-result").textContent="Введите сумму";return;}
+      const converted=latestAmount*rate;
       $("money-result").textContent=nice(converted)+" "+to;
       const when=currentRates.date?new Date(currentRates.date).toLocaleString("ru-RU",{timeZone:"UTC",dateStyle:"medium",timeStyle:"short"})+" UTC":"дата не указана";
       $("money-status").textContent="1 "+from+" = "+nice(rate)+" "+to+" · данные обновлены: "+when;
