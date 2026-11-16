@@ -1,0 +1,48 @@
+name: Currency and unit converter browser audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "app.js"
+      - "style.css"
+      - "scripts/**"
+      - ".github/workflows/browser-audit.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "app.js"
+      - "style.css"
+      - "scripts/**"
+      - ".github/workflows/browser-audit.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check app JavaScript
+        run: node --check app.js
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+      - name: Browser smoke tests
+        run: |
+          set -Eeuo pipefail
+          python -m http.server 8768 --bind 127.0.0.1 >/tmp/edinicy-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill "$SERVER_PID" 2>/dev/null || true' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8768/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/browser-smoke.mjs
